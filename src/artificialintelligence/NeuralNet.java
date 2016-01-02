@@ -62,7 +62,7 @@ public class NeuralNet {
 	@FXML
 	private Label message;
 
-	private double d1 = 0, d2 = 0, d3 = 0, d4 = 0, d5 = 0, d6 = 0, d7 = 0, d8 = 0;
+	private double d1 = 0, d2 = 0, d3 = 0, d4 = 0, d5 = 0, d6 = 0;
 	private final double e2 = 0.0001;
 	private int kachi, make, aiko;
 
@@ -75,11 +75,9 @@ public class NeuralNet {
 //				{1, 1},
 //				{1, 0},
 //					{0, 1},
-				{d1, d2, d3, d4, d5, d6, d7, d8}
+				{d1, d2, d3, d4, d5, d6}
 		};
 
-		d7 = d5;
-		d8 = d6;
 		d5 = d3;
 		d6 = d4;
 		d3 = d1;

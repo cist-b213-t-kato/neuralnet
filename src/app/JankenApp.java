@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 
-public class CalcMain extends Application {
+public class JankenApp extends Application {
 
 
 	@Override
@@ -17,7 +17,7 @@ public class CalcMain extends Application {
 			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("Sample.fxml"));
 			Scene scene = new Scene(root,500,500);
 			primaryStage.setScene(scene);
-			primaryStage.setTitle("いいちこじゃんけん");
+			primaryStage.setTitle("殺意の波動に目覚めたサザエ");
 			primaryStage.setOnCloseRequest(x -> {
 	            Platform.exit();
 	        });
