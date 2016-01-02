@@ -1,8 +1,11 @@
 package artificialintelligence;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Random;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 
 public class NeuralNet {
 
@@ -17,7 +20,7 @@ public class NeuralNet {
 	double hidden[];
 	double output[];
 
-	double alpha;	//学習率
+	double alpha = 0.1;	//学習率
 
 	public NeuralNet(){
 
@@ -42,107 +45,102 @@ public class NeuralNet {
 			}
 		}
 
-		//学習率の初期化
-		alpha = 0.3;
-
 	}
 
+	@FXML
+	private Button g;
 
-	//メイン関数
-	public static void main(String[] args) throws IOException, Exception {
+	@FXML
+	private Button c;
 
-		//BPによる学習
-		NeuralNet nn = new NeuralNet();
+	@FXML
+	private Button p;
 
-		final double e2 = 0.00001;
-		double d1 = 0, d2 = 0, d3 = 0, d4 = 0, d5 = 0, d6 = 0, d7 = 0, d8 = 0;
+	@FXML
+	private Label comMessage;
+
+	@FXML
+	private Label message;
+
+	private double d1 = 0, d2 = 0, d3 = 0, d4 = 0, d5 = 0, d6 = 0, d7 = 0, d8 = 0;
+	private final double e2 = 0.0001;
+	private int kachi, make, aiko;
+
+	@FXML
+	public void anybuttonClicked(ActionEvent event) throws IOException, Exception{
+
+
+		//訓練データ（入力）
+		double inputs[][] = {
+//				{1, 1},
+//				{1, 0},
+//					{0, 1},
+				{d1, d2, d3, d4, d5, d6, d7, d8}
+		};
+
+		d7 = d5;
+		d8 = d6;
+		d5 = d3;
+		d6 = d4;
+		d3 = d1;
+		d4 = d2;
+
+		Button button = (Button)event.getSource();
+
+		String inputStr = button.getId();
+        double[] a = Janken.trans(inputStr);
+        d1 = a[0];
+        d2 = a[1];
+        int youHand = Janken.hand(d1, d2);
+
+		compute(inputs[0]);
+		int comHand = (Janken.hand(output[0], output[1])+2)%3;
+		String str = String.format("%s", Janken.strHand(comHand));
+		comMessage.setText("COM: "+str);
+
+		int judge = Janken.judge(youHand, comHand);
+		if(judge==1){
+			kachi += 1;
+		}else if(judge==0){
+			aiko += 1;
+		}else{
+			make += 1;
+		}
+		message.setText("勝ち"+kachi+"  負け"+make+"  あいこ"+aiko);
+
+		//訓練データ（出力）
+		double ress[][] = {
+//				{0, 1},
+//				{0, 1},
+//					{0, 0},
+				{d1, d2}
+		};
 		while(true){
 
-//			d3 = nn.output[2];
-//			d4 = nn.output[3];
-//			d5 = nn.output[4];
-//			d6 = nn.output[5];
-//			d7 = nn.output[6];
-//			d8 = nn.output[7];
+			//二乗誤差の総和
+			double e = 0.0;
 
-			//訓練データ（入力）
-			double inputs[][] = {
-	//				{1, 1},
-	//				{1, 0},
-//					{0, 1},
-					{d1, d2, d3, d4, d5, d6, d7, d8}
-			};
-
-			d7 = d5;
-			d8 = d6;
-			d5 = d3;
-			d6 = d4;
-			d3 = d1;
-			d4 = d2;
-
-			System.out.print("input value: ");
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//            String[] inputStrs = br.readLine().split(" ");
-            double[] a = null;
-			a = Janken.trans(br.readLine());
-
-            d1 = (a[0]);
-            d2 = (a[1]);
-
-			nn.compute(inputs[0]);
-//			String message = String.format("予想: %s ( %f %f )",
-//					Janken.hand(nn.output[0],nn.output[1]),
-//					nn.output[0],
-//					nn.output[1]);
-			String message = String.format("予想: %s",
-					Janken.hand(nn.output[0],nn.output[1]));
-			System.out.println(message);
-
-			//訓練データ（出力）
-			double ress[][] = {
-	//				{0, 1},
-	//				{0, 1},
-//					{0, 0},
-					{d1, d2}
-			};
-			while(true){
-
-				//二乗誤差の総和
-				double e = 0.0;
-
-				//すべての訓練データについて、BP
-				for(int i=0; i<inputs.length; i++){
-					nn.compute(inputs[0]);
-					nn.backPropagation(ress[i]);
-					e += nn.calcError(ress[i]);
-				}
-
-
-				//二乗誤差が十分小さくなったら、終了
-//				System.out.println("Error = " + e);
-				if(e < e2){
-					for(int i=0; i<inputs.length; i++){
-//						String message = String.format("INPUT:%.2f,%.2f -> %.2f,%.2f(%.2f,%.2f)",
-//								inputs[i][0],
-//								inputs[i][1],
-//								nn.output[0],
-//								nn.output[1],
-//								ress[i][0],
-//								ress[i][1]);
-//						System.out.println(message);
-					}
-//					System.out.println("Error < " + e2);
-					break;
-				}
-//				System.out.println();
+			//すべての訓練データについて、BP
+			for(int i=0; i<inputs.length; i++){
+				compute(inputs[0]);
+				backPropagation(ress[i]);
+				e += calcError(ress[i]);
 			}
-			System.out.println();
+
+			//二乗誤差が十分小さくなったら、終了
+			if(e < e2){
+				break;
+			}
 		}
 
-//		nn.compute(new double[]{1.0, 1.0});
-//		System.out.println("output: " + nn.output[0]);
-
 	}
+
+//	//メイン関数
+//	public static void main(String[] args) throws IOException, Exception {
+//
+//		NeuralNet nn = new NeuralNet();
+//
+//	}
 
 	//NNに入力し、出力（＝Q値）を計算する
 	public void compute(double in[]){

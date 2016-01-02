@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="artificialintelligence.NeuralNet">
+   <center>
+      <AnchorPane prefHeight="500" prefWidth="500" BorderPane.alignment="CENTER">
+         <children>
+
+			<Label fx:id="comMessage" layoutX="190" layoutY="150" text="（COMの手）" style="-fx-font:normal 30 Tahoma" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+			<Label fx:id="message" layoutX="210" layoutY="350" text="（勝敗）" style="-fx-font:normal 20 Tahoma" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+
+            <Button fx:id="g" layoutX="100.0" layoutY="400.0" mnemonicParsing="false" onAction="#anybuttonClicked" text="グー">
+            </Button>
+            <Button fx:id="c" layoutX="200.0" layoutY="400.0" mnemonicParsing="false" onAction="#anybuttonClicked" text="チョキ">
+            </Button>
+            <Button fx:id="p" layoutX="300.0" layoutY="400.0" mnemonicParsing="false" onAction="#anybuttonClicked" text="パー">
+            </Button>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
