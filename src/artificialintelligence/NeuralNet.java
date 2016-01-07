@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
+
 public class NeuralNet {
 
 	static final int N_INPUT = 6;
@@ -29,6 +30,7 @@ public class NeuralNet {
 		output = new double[N_OUTPUT];
 
 		//重みを[-0.1, 0.1]で初期化
+		//0で初期化すると動かなくなる
 		Random rnd = new Random();
 
 		w1 = new double[N_INPUT][N_HIDDEN];
@@ -49,21 +51,19 @@ public class NeuralNet {
 
 	@FXML
 	private Button g;
-
 	@FXML
 	private Button c;
-
 	@FXML
 	private Button p;
-
 	@FXML
 	private Label comMessage;
-
 	@FXML
 	private Label message;
 
+	//入力層に与える値を記憶する
 	private double d1 = 0, d2 = 0, d3 = 0, d4 = 0, d5 = 0, d6 = 0;
-	private final double e2 = 0.0001;
+
+	//
 	private int kachi, make, aiko;
 
 	@FXML
@@ -96,7 +96,7 @@ public class NeuralNet {
 		String str = String.format("%s", Janken.strHand(comHand));
 		comMessage.setText("COM: "+str);
 
-		int judge = Janken.judge(youHand, comHand);
+		int judge = Janken.compare(youHand, comHand);
 		if(judge==1){
 			kachi += 1;
 		}else if(judge==0){
@@ -106,13 +106,14 @@ public class NeuralNet {
 		}
 		message.setText("勝ち"+kachi+"  負け"+make+"  あいこ"+aiko);
 
-		//訓練データ（出力）
+		//訓練データ（出力）教師信号
 		double ress[][] = {
 //				{0, 1},
 //				{0, 1},
 //					{0, 0},
 				{d1, d2}
 		};
+
 		while(true){
 
 			//二乗誤差の総和
@@ -126,19 +127,12 @@ public class NeuralNet {
 			}
 
 			//二乗誤差が十分小さくなったら、終了
-			if(e < e2){
+			if(e < 0.0001){
 				break;
 			}
 		}
 
 	}
-
-//	//メイン関数
-//	public static void main(String[] args) throws IOException, Exception {
-//
-//		NeuralNet nn = new NeuralNet();
-//
-//	}
 
 	//NNに入力し、出力（＝Q値）を計算する
 	public void compute(double in[]){
