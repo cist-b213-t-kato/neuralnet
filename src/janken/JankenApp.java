@@ -1,4 +1,4 @@
-package app;
+package janken;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +12,7 @@ public class JankenApp extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("JankenApp.fxml"));
+		BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("JankenController.fxml"));
 		Scene scene = new Scene(root, 700, 700);
 //			primaryStage.setResizable(false);
 		primaryStage.setScene(scene);

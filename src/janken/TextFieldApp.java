@@ -1,26 +1,33 @@
-package app;
+package janken;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
-public class SimpleDraw extends Application {
+public class TextFieldApp extends Application {
+
 	@Override
 	public void start(Stage stage) throws Exception {
-		stage.setTitle("simple draw");
+		stage.setTitle("TextField App");
+		stage.setWidth(100);
+		stage.setHeight(100+20);
+
 		Group root = new Group();
+
 		Path path = new Path();
 		root.getChildren().add(path);
+
+		TextField textField = new TextField();
+		root.getChildren().add(textField);
+
+		Button submitButton = new Button("Submit");
+		root.getChildren().add(submitButton);
+
 		Scene scene = new Scene(root);
-        scene.setOnMousePressed((event) -> {
-        	path.getElements().add(new MoveTo(event.getX(),event.getY()));
-        });
-        scene.setOnMouseDragged((event)->{
-        	path.getElements().add(new LineTo(event.getX(),event.getY()));
-        });
+
 		stage.setScene(scene);
 		stage.show();
 	}

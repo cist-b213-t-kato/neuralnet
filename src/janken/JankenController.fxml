@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.NeuralNetController">
+<BorderPane xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="janken.JankenController">
    <bottom>
 		<AnchorPane prefHeight="654.0" prefWidth="624.0" BorderPane.alignment="CENTER">
 			<children>

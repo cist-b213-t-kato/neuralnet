@@ -1,4 +1,4 @@
-package app;
+package janken;
 import java.io.IOException;
 
 import artificialintelligence.Janken;
@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-public class NeuralNetController {
+public class JankenController {
 
 	@FXML
 	private Button g;
@@ -37,7 +37,7 @@ public class NeuralNetController {
 
 	private NeuralNet neuralNet;
 
-	public NeuralNetController(){
+	public JankenController(){
 		neuralNet = new NeuralNet(6, 6, 2);
 	}
 

@@ -1,4 +1,4 @@
-package app;
+package janken;
 
 
 import java.math.BigDecimal;
