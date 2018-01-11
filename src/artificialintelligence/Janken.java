@@ -48,7 +48,7 @@ public class Janken {
 		}
 	}
 
-	public static double[] trans(String a) throws Exception{
+	public static double[] toBinary(String a) throws Exception{
 		if("g".equals(a)){
 			return new double[]{0, 1};
 		}else if("c".equals(a)){
