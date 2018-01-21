@@ -18,9 +18,9 @@ import javafx.stage.Stage;
 public class CRApp extends Application {
 
 	// 辺の長さ
-	private static final int sideSize = 30;
-	private static final int xMax = 5;
-	private static final int yMax = 5;
+	private static final int sideSize = 10;
+	private static final int xMax = 10;
+	private static final int yMax = 10;
 	private int[] array;
 	// 0が白 1が黒
 	private int color = 0;
@@ -35,7 +35,7 @@ public class CRApp extends Application {
 
 	private TextField teacherSignalTextField;
 
-	private Label label;
+	private Label answerLabel;
 
 	private AnchorPane canvasPane;
 
@@ -63,11 +63,11 @@ public class CRApp extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		stage.setTitle("dot draw");
+		stage.setTitle("character recognition");
 		stage.setWidth(300);
-		stage.setHeight(600);
+		stage.setHeight(400);
 
-		NeuralNet neuralNet = new NeuralNet(25, 25, 10);
+		NeuralNet neuralNet = new NeuralNet(100, 100, 10);
 
 		AnchorPane root = new AnchorPane();//(BorderPane)FXMLLoader.load(getClass().getResource("CRApp.fxml"));
 		Scene scene = new Scene(root);
@@ -148,8 +148,8 @@ public class CRApp extends Application {
 		root.getChildren().add(registerButton);
 
 		learnButton = new Button("learn");
-		learnButton.setLayoutX(0);
-		learnButton.setLayoutY(300);
+		learnButton.setLayoutX(200);
+		learnButton.setLayoutY(200);
 		learnButton.setPrefWidth(100);
 		learnButton.setPrefHeight(50);
 		learnButton.setOnAction(event->{
@@ -158,40 +158,11 @@ public class CRApp extends Application {
 		});
 		root.getChildren().add(learnButton);
 
-		label = new Label("-");
-		label.setLayoutX(150);
-		label.setLayoutY(400);
-		label.setFont(new Font("Arial", 30));
-		root.getChildren().add(label);
-
-		computeButton = new Button("compute");
-		computeButton.setLayoutX(0);
-		computeButton.setLayoutY(400);
-		computeButton.setPrefWidth(100);
-		computeButton.setPrefHeight(50);
-		computeButton.setOnAction(event->{
-			double[] doubleArray = new double[yMax*xMax];
-			for ( int i=0; i<yMax; i++ ) {
-				for ( int j=0; j<xMax; j++ ) {
-					doubleArray[xMax*i+j] = array[xMax*i+j];
-				}
-			}
-			double[] result = neuralNet.compute(doubleArray);
-			System.out.println("compute");
-			for ( double value : result ) {
-				System.out.printf("%f ", value);
-			}
-			int max = 0;
-			for ( int i=1; i<result.length; i++ ) {
-				if ( result[i] > result[max] ) {
-					max = i;
-				}
-			}
-			System.out.println();
-			System.out.printf("compute: %d\n", max);
-			label.setText(""+max);
-		});
-		root.getChildren().add(computeButton);
+		answerLabel = new Label("-");
+		answerLabel.setLayoutX(120);
+		answerLabel.setLayoutY(0);
+		answerLabel.setFont(new Font("Arial", 30));
+		root.getChildren().add(answerLabel);
 
 		scene.setOnMousePressed((event) -> {
         	int x = (int)(event.getX()/sideSize);
@@ -210,6 +181,22 @@ public class CRApp extends Application {
         	}
         	draw(canvasPane, x, y);
         });
+		scene.setOnMouseReleased((event)->{
+			double[] doubleArray = new double[yMax*xMax];
+			for ( int i=0; i<yMax; i++ ) {
+				for ( int j=0; j<xMax; j++ ) {
+					doubleArray[xMax*i+j] = array[xMax*i+j];
+				}
+			}
+			double[] result = neuralNet.compute(doubleArray);
+			int max = 0;
+			for ( int i=1; i<result.length; i++ ) {
+				if ( result[i] > result[max] ) {
+					max = i;
+				}
+			}
+			answerLabel.setText(""+max);
+		});
 		stage.setScene(scene);
 		stage.show();
 	}
