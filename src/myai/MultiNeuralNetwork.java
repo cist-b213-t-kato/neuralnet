@@ -22,47 +22,48 @@ public class MultiNeuralNetwork {
 
 	public static void main(String[] args) {
 
-		new MultiNeuralNetwork(2, 2, 1, 0.1).execute(1000);		//収束しない
+		MultiNeuralNetwork nn = new MultiNeuralNetwork(25, 100, 10, 0.1);
 
-		/*
-		 * ( 結論？ )
-		 * 排他的論理和ほどの規模の回路なら、学習率0.5くらいがちょうどいい？
-		 * やはり隠れ層はニューロンが多いほど学びやすそう
-		 * */
+		double[][] ins = {
+				{
+					0, 1, 1, 1, 0,
+					0, 1, 0, 1, 0,
+					0, 1, 0, 1, 0,
+					0, 1, 0, 1, 0,
+					0, 1, 1, 1, 0,
+				},
+				{
+					0, 0, 1, 1, 0,
+					0, 0, 0, 1, 0,
+					0, 0, 0, 1, 0,
+					0, 0, 0, 1, 0,
+					0, 0, 0, 1, 0,
+				},
+		};
+		double[][] ts = {
+				{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+				{ 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+		};
+
+		nn.learn(ins, ts);
+
+		double[] demo = {
+				0, 1, 1, 1, 0,
+				0, 1, 0, 1, 0,
+				0, 1, 0, 1, 0,
+				0, 1, 0, 1, 0,
+				0, 1, 1, 1, 0,
+		};
+
+		nn.compute(demo);
+		nn.printResult();
 
 	}
 
-	public void execute( int count ) {
-
-		double[][] ins = {
-				{ 0, 0 },
-				{ 0, 1 },
-				{ 1, 0 },
-				{ 1, 1 },
-		};
-		double[][] ts = {
-				{ 0 },
-				{ 1 },
-				{ 1 },
-				{ 0 },
-		};
-
-		System.out.printf("input:%d hidden:%d output:%d eta:%f count:%d\n", input.length, hidden.length, output.length, eta, count);
-
-		for ( int j=1; j<=count; j++ ) {
-			for ( int i=0; i<4; i++ ) {
-				learn(ins[i], ts[i]);
-				if ( j % count == 0 ) {
-					double[] y = compute(ins[i]);
-					System.out.printf("in:(%f,%f)  y:(%f)\n", ins[i][0], ins[i][1], y[0]);
-				}
-			}
-			if ( j % 100 == 0 ) {
-//				nn.printWeight();
-			}
+	public void printResult() {
+		for ( int i=0; i<output.length; i++ ) {
+			System.out.printf( "%d: %.4f%%\n", i, output[i]*100 );
 		}
-
-
 	}
 
 	public MultiNeuralNetwork(int iSize, int hSize, int oSize, double eta) {
@@ -123,20 +124,44 @@ public class MultiNeuralNetwork {
 			hidden[j] = sigmoid(wxb);
 		}
 
+		double sum = 0; // softmax関数の分母となる
 		for ( int j=0; j<output.length; j++ ) {
 			double vhc = 0;
 			for ( int i=0; i<hidden.length; i++ ) {
 				vhc += v[i][j] * hidden[i];
 			}
 			vhc += c[j];
-			output[j] = sigmoid(vhc);
+			sum += output[j] = Math.exp(vhc);
+		}
+
+		for ( int i=0; i<output.length; i++ ) {
+			output[i] = output[i] / sum;
 		}
 
 		return output;
 	}
 
-	public void learn( double in[], double t[] ) {
-		compute(in);
+	public void learn( double[][] ins, double[][] ts ) {
+		for ( int j=0; j<100000; j++ ) {
+			double e = 0;
+			for ( int i=0; i<ins.length; i++ ) {
+				compute(ins[i]);
+				backPropagation(ins[i], ts[i]);
+				for ( int k=0; k<output.length; k++ ) {
+					e += Math.pow(output[k] - ts[i][k], 2);
+				}
+			}
+
+			e *= 0.5;
+
+			if ( e < 0.0001 ) {
+				System.out.println("e<0.0001");
+				break;
+			}
+		}
+	}
+
+	private void backPropagation( double in[], double t[] ) {
 
 		for ( int i=0; i<output.length; i++ ) {
 			double dk = output[i] - t[i];
@@ -158,7 +183,6 @@ public class MultiNeuralNetwork {
 			}
 			b[j] += - eta * dj;
 		}
-
 	}
 
 	public void printWeight() {
