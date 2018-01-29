@@ -20,6 +20,8 @@ public class MultiNeuralNetwork {
 
 	private double eta;
 
+	private Random rnd = new Random();
+
 	public static void main(String[] args) {
 
 		MultiNeuralNetwork nn = new MultiNeuralNetwork(25, 100, 10, 0.1);
@@ -83,26 +85,33 @@ public class MultiNeuralNetwork {
 
 	}
 
-	private void initRandomWeight() {
+	/**
+	 *
+	 * @see https://qiita.com/m-hayashi/items/02065a2e2ec3e2269e0b
+	 * @return
+	 */
+	protected double createRandom( double n ) {
+		return rnd.nextGaussian() * Math.sqrt(2/n);
+	}
 
-		Random rnd = new Random();
+	private void initRandomWeight() {
 
 		for (int i = 0; i < input.length; i++) {
 			for (int j = 0; j < hidden.length; j++) {
-				w[i][j] = (rnd.nextDouble() * 2.0 - 1.0) * 0.1;
+				w[i][j] = createRandom(input.length);
 			}
 		}
 		for ( int i=0; i<hidden.length; i++ ) {
-			b[i] = (rnd.nextDouble() * 2.0 - 1.0) * 0.1;
+			b[i] = createRandom(1);
 		}
 
 		for (int i = 0; i < hidden.length; i++) {
 			for (int j = 0; j < output.length; j++) {
-				v[i][j] = (rnd.nextDouble() * 2.0 - 1.0) * 0.1;
+				v[i][j] = createRandom(hidden.length);
 			}
 		}
 		for ( int i=0; i<output.length; i++ ) {
-			c[i] = (rnd.nextDouble() * 2.0 - 1.0) * 0.1;
+			c[i] = createRandom(1);
 		}
 
 	}
@@ -154,11 +163,16 @@ public class MultiNeuralNetwork {
 
 			e *= 0.5;
 
+//			if ( j % 100 == 0 ) {
+//				System.out.println("error: " + e);
+//			}
+
 			if ( e < 0.0001 ) {
 				System.out.println("e<0.0001");
 				break;
 			}
 		}
+		printWeight();
 	}
 
 	private void backPropagation( double in[], double t[] ) {

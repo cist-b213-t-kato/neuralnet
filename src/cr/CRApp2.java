@@ -159,8 +159,8 @@ public class CRApp2 extends Application {
 		root.getChildren().add(learnButton);
 
 		answerLabel = new Label("-");
-		answerLabel.setLayoutX(110);
-		answerLabel.setLayoutY(0);
+		answerLabel.setLayoutX(0);
+		answerLabel.setLayoutY(110);
 		root.getChildren().add(answerLabel);
 
 		scene.setOnMousePressed((event) -> {
@@ -194,13 +194,13 @@ public class CRApp2 extends Application {
 					max = i;
 				}
 			}
-			if ( result[max] >= 0.8 ) {
-				answerLabel.setFont(new Font("Arial", 30));
-				answerLabel.setText(""+max);
-			} else {
-				answerLabel.setFont(new Font("Arial", 10));
-				answerLabel.setText("正直わからん");
-			}
+//			if ( result[max] >= 0.8 ) {
+				answerLabel.setFont(new Font("Arial", 20));
+				answerLabel.setText(String.format("%.1f%%の確率で%d", result[max]*100, max));
+//			} else {
+//				answerLabel.setFont(new Font("Arial", 10));
+//				answerLabel.setText("おそらく");
+//			}
 			neuralNet.printResult();
 		});
 		stage.setScene(scene);
