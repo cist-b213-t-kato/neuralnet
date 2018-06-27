@@ -1,14 +1,8 @@
-package ai2;
+package artificialintelligence;
 
 import java.util.Random;
 
-/**
- * ニューロコンピューティング入門（坂和正敏・田中雅博）
- * の理論を忠実に再現
- * @author tkato
- *
- */
-public class NeuralNet2 {
+public class OldNeuralNet {
 
 	final int MASS_X = 6; // マス目の数（縦）
 	final int MASS_Y = 6; // マス目の数（横）
@@ -18,8 +12,6 @@ public class NeuralNet2 {
 
 	double w1[][];	//入力層>隠れ層の重み
 	double w2[][];	//隠れ層>出力層の重み
-	double b1[];	//定数1を入力とした入力層>隠れ層の重み 数式的には閾値θとした時の-θと等しい
-	double b2[];	//定数1を入力とした隠れ層>出力層の重み 数式的には閾値θとした時の-θと等しい
 
 	double input[];  // 入力層
 	double hidden[]; // 中間層
@@ -27,7 +19,7 @@ public class NeuralNet2 {
 
 	double alpha = 0.1;	//学習率
 
-	public NeuralNet2( int nInput, int nHidden, int nOutput ) {
+	public OldNeuralNet( int nInput, int nHidden, int nOutput ) {
 		N_INPUT = nInput;
 		N_HIDDEN = nHidden;
 		N_OUTPUT = nOutput;
@@ -39,7 +31,8 @@ public class NeuralNet2 {
 
 	// プログラムを起動する
 	public static void main(String[] args) {
-		NeuralNet2 neuralNet = new NeuralNet2(2, 4, 1);
+//		NeuralNet neuralNet = new NeuralNet(36, 36, 4);
+		OldNeuralNet neuralNet = new OldNeuralNet(2, 2, 1);
 		neuralNet.run();
 	}
 
@@ -97,7 +90,7 @@ public class NeuralNet2 {
 		while(true){
 
 			double e = 0.0; // 二乗誤差の総和(初期値は0.0)
-			double threshold = 0.0001; // 二乗誤差の閾値
+			double threshold = 0.001; // 二乗誤差の閾値
 
 			// すべての訓練データをニューラルネットワークに入力・計算・誤差伝搬
 			for(int i=0; i<x.length; i++){
@@ -140,7 +133,6 @@ public class NeuralNet2 {
 		};
 		*/
 
-
 		double[][] inputs = {
 				{ 0, 0 },
 				{ 0, 1 },
@@ -153,17 +145,14 @@ public class NeuralNet2 {
 			System.out.println(output[0]);
 		}
 
-//		compute(inputs[0]);
 //		print(inputs[0], output, 0);
-//
-//		compute(inputs[1]);
 //		print(inputs[1], output, 1);
 
 	}
 
 	// 初期化処理を行う
 	public void initialize(){
-		// 重みを-0.1~0.1で初期化
+		// 重みを[-0.1, 0.1]で初期化
 		Random rnd = new Random();
 
 		w1 = new double[N_INPUT][N_HIDDEN];
@@ -172,7 +161,6 @@ public class NeuralNet2 {
 				w1[i][j] = (rnd.nextDouble()*2.0 - 1.0) * 0.1;
 			}
 		}
-		b1 = new double[N_HIDDEN];
 
 		w2 = new double[N_HIDDEN][N_OUTPUT];
 		for(int i=0; i<N_HIDDEN; i++){
@@ -180,7 +168,6 @@ public class NeuralNet2 {
 				w2[i][j] = (rnd.nextDouble()*2.0 - 1.0) * 0.1;
 			}
 		}
-		b2 = new double[N_OUTPUT];
 	}
 
 	// NNに入力し、出力を計算する
@@ -197,7 +184,6 @@ public class NeuralNet2 {
 			for(int j=0; j<N_INPUT; j++){
 				hidden[i] += w1[j][i] * input[j];
 			}
-			hidden[i] += b1[i];
 			hidden[i] = sigmoid(hidden[i]);
 		}
 
@@ -207,7 +193,6 @@ public class NeuralNet2 {
 			for(int j=0; j<N_HIDDEN; j++){
 				output[i] += w2[j][i] * (hidden[j]);
 			}
-			output[i] += b2[i];
 			output[i] = sigmoid(output[i]);
 		}
 	}
@@ -221,31 +206,26 @@ public class NeuralNet2 {
 	// 誤差逆伝播法による重みの更新
 	public void backPropagation(double teach[]){
 
-		// 誤差
-		double[] deltas = new double[N_OUTPUT];
-
 		// 中間層>出力層の重みを更新
-		for(int j=0; j<N_OUTPUT; j++){
-			deltas[j] = (teach[j]-output[j]) * output[j] * (1.0-output[j]);
-			for(int i=0; i<N_HIDDEN; i++){
-				w2[i][j] += alpha * deltas[j] * hidden[i];
+		for(int i=0; i<teach.length; i++){
+			for(int j=0; j<N_HIDDEN; j++){
+				double delta = alpha * output[i] * (1.0-output[i]) * (output[i]-teach[i]) * hidden[j] ;
+				w2[j][i] -= delta;
 			}
-			b2[j] += alpha * deltas[j];
 		}
 
 		// 入力層>中間層の重みを更新
 		for(int i=0; i<N_HIDDEN; i++){
 
 			double sum = 0.0;
-			for(int j=0; j<N_OUTPUT; j++){
-				sum += w2[i][j] * deltas[j]; //誤差の逆伝播
+			for(int k=0; k<teach.length; k++){
+				sum += w2[i][k] * output[k] * (1.0-output[k]) * (output[k]-teach[k]);
 			}
 
-			double delta = hidden[i] * (1.0-hidden[i]) * sum;
 			for(int j=0; j<N_INPUT; j++){
-				w1[j][i] += alpha * delta * input[j];
+				double delta = alpha * hidden[i] * (1.0-hidden[i]) * sum * input[j];
+				w1[j][i] -= delta;
 			}
-			b1[i] += alpha * delta;
 		}
 	}
 
@@ -286,7 +266,19 @@ public class NeuralNet2 {
 		int v4 = (int)(a4+0.5);
 
 		// 出力層の値
-		return v1 * 8 + v2 * 4 + v3 * 2 + v4 * 1;
+		int[][][][] outputValue = new int[2][2][2][2];
+		outputValue[0][0][0][0] = 0;
+		outputValue[0][0][0][1] = 1;
+		outputValue[0][0][1][0] = 2;
+		outputValue[0][0][1][1] = 3;
+		outputValue[0][1][0][0] = 4;
+		outputValue[0][1][0][1] = 5;
+		outputValue[0][1][1][0] = 6;
+		outputValue[0][1][1][1] = 7;
+		outputValue[1][0][0][0] = 8;
+		outputValue[1][0][0][1] = 9;
+
+		return outputValue[v1][v2][v3][v4];
 	}
 
 }
