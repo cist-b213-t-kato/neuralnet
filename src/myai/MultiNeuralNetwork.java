@@ -7,7 +7,7 @@ import java.util.Random;
  * @author tkato
  *
  */
-public class MultiNeuralNetwork {
+public class MultiNeuralNetwork implements INeuralNetwork {
 
 	private double[] input;
 	private double[] hidden; //入力層からの出力
@@ -21,6 +21,8 @@ public class MultiNeuralNetwork {
 	private double eta;
 
 	private Random rnd = new Random();
+
+	private double emin = 0.0000001;
 
 	public static void main(String[] args) {
 
@@ -96,22 +98,18 @@ public class MultiNeuralNetwork {
 
 	private void initRandomWeight() {
 
-		for (int i = 0; i < input.length; i++) {
-			for (int j = 0; j < hidden.length; j++) {
+		for (int j = 0; j < hidden.length; j++) {
+			for (int i = 0; i < input.length; i++) {
 				w[i][j] = createRandom(input.length);
 			}
-		}
-		for ( int i=0; i<hidden.length; i++ ) {
-			b[i] = createRandom(1);
+			b[j] = createRandom(1);
 		}
 
-		for (int i = 0; i < hidden.length; i++) {
-			for (int j = 0; j < output.length; j++) {
+		for (int j = 0; j < output.length; j++) {
+			for (int i = 0; i < hidden.length; i++) {
 				v[i][j] = createRandom(hidden.length);
 			}
-		}
-		for ( int i=0; i<output.length; i++ ) {
-			c[i] = createRandom(1);
+			c[j] = createRandom(1);
 		}
 
 	}
@@ -120,6 +118,7 @@ public class MultiNeuralNetwork {
 		return 1 / ( 1 + Math.exp(-x) );
 	}
 
+	@Override
 	public double[] compute( double[] in ) {
 
 		input = in;
@@ -150,6 +149,7 @@ public class MultiNeuralNetwork {
 		return output;
 	}
 
+	@Override
 	public void learn( double[][] ins, double[][] ts ) {
 		for ( int j=0; j<100000; j++ ) {
 			double e = 0;
@@ -167,35 +167,36 @@ public class MultiNeuralNetwork {
 //				System.out.println("error: " + e);
 //			}
 
-			if ( e < 0.0001 ) {
-				System.out.println("e<0.0001");
+			if ( e < emin ) {
+				System.out.println("e<" + emin);
 				break;
 			}
 		}
-		printWeight();
+//		printWeight();
 	}
 
 	private void backPropagation( double in[], double t[] ) {
 
+		double[] dk = new double[output.length];
+
 		for ( int i=0; i<output.length; i++ ) {
-			double dk = output[i] - t[i];
+			dk[i] = t[i] - output[i];
 			for ( int j=0; j<hidden.length; j++ ) {
-				v[j][i] += - eta * dk * hidden[j];
+				v[j][i] += eta * dk[i] * hidden[j];
 			}
-			c[i] += - eta * dk;
+			c[i] += eta * dk[i];
 		}
 
 		for ( int j=0; j<hidden.length; j++ ) {
 			double dj = 0;
 			for ( int k=0; k<output.length; k++ ) {
-				double dk = output[k] - t[k];
-				dj += v[j][k] * dk;
+				dj += v[j][k] * dk[k];
 			}
 			dj *= hidden[j] * ( 1 - hidden[j] );
 			for ( int i=0; i<input.length; i++ ) {
-				w[i][j] += - eta * dj * input[i];
+				w[i][j] += eta * dj * input[i];
 			}
-			b[j] += - eta * dj;
+			b[j] += eta * dj;
 		}
 	}
 
