@@ -1,18 +1,17 @@
 package ai;
 
 /**
- * 文字認識(Character Recognition)
+ * 文字認識 (Character Recognition)
  * @author tkato
  *
  */
-public class CRApp {
-
+public class SigmoidCRApp {
 	static final int MASS_X = 6; // マス目の数（縦）
 	static final int MASS_Y = 6; // マス目の数（横）
 
 	public static void main(String[] args) {
 
-		NeuralNet nn = new NeuralNet(36, 36, 4);
+		SigmoidNeuralNetwork nn = new SigmoidNeuralNetwork(36, 36, 4);
 
 		// 訓練データ（入力）
 		double knownInputs[][] = {
@@ -75,7 +74,6 @@ public class CRApp {
 			double[] output = nn.compute(unknownInputs[i]);
 			print(unknownInputs[i], output, expects[i]);
 		}
-
 	}
 
 	// 画面に入力データと実体値、予測値を表示する
@@ -105,5 +103,4 @@ public class CRApp {
 		// 出力層の値
 		return v1 * 8 + v2 * 4 + v3 * 2 + v4 * 1;
 	}
-
 }

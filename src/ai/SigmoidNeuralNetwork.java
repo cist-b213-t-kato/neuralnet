@@ -3,13 +3,11 @@ package ai;
 import java.util.Random;
 
 /**
- * ニューロコンピューティング入門（坂和正敏・田中雅博）
- * の理論を忠実に再現
+ * 出力層が Sigmoid 関数の Neural Network
+ * @see ニューロコンピューティング入門（坂和正敏・田中雅博）
  * @author tkato
- *
  */
-public class NeuralNet {
-
+public class SigmoidNeuralNetwork implements INeuralNetwork {
 	final int N_INPUT;  // 入力層の数、mass = 6 * 6 = 36
 	final int N_HIDDEN; // 中間層の数、N_INPUTと同じ 36
 	final int N_OUTPUT;  // 出力層の数、0~9にしたいので
@@ -25,7 +23,7 @@ public class NeuralNet {
 
 	double alpha = 0.1;	//学習率
 
-	public NeuralNet( int nInput, int nHidden, int nOutput ) {
+	public SigmoidNeuralNetwork( int nInput, int nHidden, int nOutput ) {
 		N_INPUT = nInput;
 		N_HIDDEN = nHidden;
 		N_OUTPUT = nOutput;
@@ -52,12 +50,11 @@ public class NeuralNet {
 			}
 		}
 		b2 = new double[N_OUTPUT];
-
 	}
 
 	// NNに入力し、出力を計算する
+	@Override
 	public double[] compute(double x[]){
-
 		// 入力層の入力
 		for(int i=0; i<N_INPUT; i++){
 			input[i] = x[i];
@@ -88,13 +85,11 @@ public class NeuralNet {
 
 	// シグモイド関数
 	public double sigmoid(double i){
-		double a = 1.0 / (1.0 + Math.exp(-i));
-		return a;
+		return 1.0 / (1.0 + Math.exp(-i));
 	}
 
 	// 誤差逆伝播法による重みの更新
 	public void backPropagation(double teach[]){
-
 		// 誤差
 		double[] deltas = new double[N_OUTPUT];
 
@@ -109,7 +104,6 @@ public class NeuralNet {
 
 		// 入力層>中間層の重みを更新
 		for(int i=0; i<N_HIDDEN; i++){
-
 			double sum = 0.0;
 			for(int j=0; j<N_OUTPUT; j++){
 				sum += w2[i][j] * deltas[j]; //誤差の逆伝播
@@ -129,16 +123,14 @@ public class NeuralNet {
 		for(int i=0; i<teach.length; i++){
 			e += Math.pow(teach[i]-output[i], 2.0);
 		}
-		e *= 0.5;
-		return e;
+		return 0.5 * e;
 	}
 
 	// 学習
+	@Override
 	public void learn( double[][] knownInputs, double[][] teach ) {
-
 		int step = 0; //試行回数
 		while ( true ) {
-
 			double e = 0.0; // 二乗誤差の総和(初期値は0.0)
 
 			// すべての訓練データをニューラルネットワークに入力・計算・誤差伝搬
@@ -157,12 +149,9 @@ public class NeuralNet {
 			if(e < 0.0001){
 				break;
 			}
-
 			step++;
 		}
-
 	}
-
 }
 
 

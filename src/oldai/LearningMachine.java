@@ -1,4 +1,4 @@
-package artificialintelligence;
+package oldai;
 //LearningMachine.java
 public interface LearningMachine {
     //学習

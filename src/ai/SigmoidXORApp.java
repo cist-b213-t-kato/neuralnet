@@ -5,10 +5,10 @@ package ai;
  * @author tkato
  *
  */
-public class XORApp {
+public class SigmoidXORApp {
 	public static void main(String[] args) {
 
-		NeuralNet nn = new NeuralNet(2, 4, 1);
+		SigmoidNeuralNetwork nn = new SigmoidNeuralNetwork(2, 4, 1);
 
 		double[][] knownInputs = {
 				{ 0, 0 },

@@ -1,4 +1,4 @@
-package artificialintelligence;
+package oldai;
 //BackPropergation.java
 import java.util.AbstractMap;
 import java.util.ArrayList;

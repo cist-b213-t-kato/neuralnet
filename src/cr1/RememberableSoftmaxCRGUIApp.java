@@ -1,8 +1,8 @@
-package cr;
-import java.util.ArrayList;
+package cr1;
 import java.util.List;
 
-import artificialintelligence.NeuralNet;
+import ai.NeuralNetService;
+import ai.SoftmaxNeuralNetwork;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,7 +15,16 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class CRApp extends Application {
+/**
+ * DB(SQLite)にデータを記憶する文字認識アプリ
+ * @author tkato
+ *
+ */
+public class RememberableSoftmaxCRGUIApp extends Application {
+
+	private NeuralNetService service;
+
+	private SoftmaxNeuralNetwork nn;
 
 	// 辺の長さ
 	private static final int sideSize = 10;
@@ -31,19 +40,42 @@ public class CRApp extends Application {
 
 	private Button registerButton;
 
-	private Button computeButton;
-
 	private TextField teacherSignalTextField;
 
 	private Label answerLabel;
 
 	private AnchorPane canvasPane;
 
-	public CRApp() {
-		array = new int[yMax * xMax];
+	private List<double[]> inputs;
+	private List<double[]> ress;
+
+	private void drawInput( double[] input ) {
+		for ( int i=0; i<yMax; i++ ) {
+			for ( int j=0; j<xMax; j++ ) {
+				System.out.printf("%.0f", input[i*xMax+j]);
+			}
+			System.out.println();
+		}
 	}
 
-	public void draw(Pane canvasPane, int x, int y) {
+	public RememberableSoftmaxCRGUIApp() {
+		service = new NeuralNetService();
+		inputs = service.getImageList();
+		ress = service.getTeachList();
+		System.out.println("データベースの件数: " + inputs.size());
+		for ( int i=0; i<inputs.size(); i++ ) {
+			drawInput(inputs.get(i));
+			System.out.println("教師信号: " + calcMaxIndex(ress.get(i)));
+			System.out.println();
+		}
+		array = new int[yMax * xMax];
+		nn = new SoftmaxNeuralNetwork(100, 2000, 10, 0.1);
+		double[][] i = inputs.toArray(new double[0][0]);
+		double[][] r = ress.toArray(new double[0][0]);
+		nn.learn(i, r);
+	}
+
+	private void draw(Pane canvasPane, int x, int y) {
     	array[xMax*y+x] = color;
     	int drawX = x * sideSize;
     	int drawY = y * sideSize;
@@ -58,16 +90,11 @@ public class CRApp extends Application {
     	canvasPane.getChildren().add(rect);
 	}
 
-	List<double[]> inputs = new ArrayList<>();
-	List<double[]> ress = new ArrayList<>();
-
 	@Override
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("character recognition");
 		stage.setWidth(300);
 		stage.setHeight(400);
-
-		NeuralNet neuralNet = new NeuralNet(100, 100, 10);
 
 		AnchorPane root = new AnchorPane();//(BorderPane)FXMLLoader.load(getClass().getResource("CRApp.fxml"));
 		Scene scene = new Scene(root);
@@ -127,6 +154,8 @@ public class CRApp extends Application {
 					inputs.add(doubleArray);
 					ress.add(teacherSignalArray);
 
+					service.register(doubleArray, teacherSignalArray);
+
 					//reset
 					canvasPane.getChildren().clear();
 					array = new int[yMax*xMax];
@@ -137,6 +166,12 @@ public class CRApp extends Application {
 						}
 					}
 					teacherSignalTextField.clear();
+
+//					if (inputs.size() > 30) {
+//						inputs.remove(0);
+//						ress.remove(0);
+//					}
+
 					return;
 				}
 			} catch ( NumberFormatException e ) {
@@ -153,15 +188,16 @@ public class CRApp extends Application {
 		learnButton.setPrefWidth(100);
 		learnButton.setPrefHeight(50);
 		learnButton.setOnAction(event->{
-			neuralNet.learn((double[][])inputs.toArray(new double[0][0]), (double[][])ress.toArray(new double[0][0]));
+			double[][] i = inputs.toArray(new double[0][0]);
+			double[][] r = ress.toArray(new double[0][0]);
+			nn.learn(i, r);
 			System.out.println("学習終了");
 		});
 		root.getChildren().add(learnButton);
 
 		answerLabel = new Label("-");
-		answerLabel.setLayoutX(120);
-		answerLabel.setLayoutY(0);
-		answerLabel.setFont(new Font("Arial", 30));
+		answerLabel.setLayoutX(0);
+		answerLabel.setLayoutY(110);
 		root.getChildren().add(answerLabel);
 
 		scene.setOnMousePressed((event) -> {
@@ -188,17 +224,23 @@ public class CRApp extends Application {
 					doubleArray[xMax*i+j] = array[xMax*i+j];
 				}
 			}
-			double[] result = neuralNet.compute(doubleArray);
-			int max = 0;
-			for ( int i=1; i<result.length; i++ ) {
-				if ( result[i] > result[max] ) {
-					max = i;
-				}
-			}
-			answerLabel.setText(""+max);
+			double[] result = nn.compute(doubleArray);
+			int maxIndex = calcMaxIndex(result);
+			answerLabel.setFont(new Font("Arial", 20));
+			answerLabel.setText(String.format("%.1f%%の確率で%d", result[maxIndex]*100, maxIndex));
 		});
 		stage.setScene(scene);
 		stage.show();
+	}
+
+	private int calcMaxIndex(double[] output) {
+		int maxIndex = 0;
+		for ( int i=1; i<output.length; i++ ) {
+			if ( output[i] > output[maxIndex] ) {
+				maxIndex = i;
+			}
+		}
+		return maxIndex;
 	}
 
 	public static void main(String[] args) {

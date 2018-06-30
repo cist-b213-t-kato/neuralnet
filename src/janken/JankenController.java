@@ -1,12 +1,12 @@
 package janken;
 import java.io.IOException;
 
-import artificialintelligence.Janken;
-import artificialintelligence.NeuralNet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import oldai.Janken;
+import oldai.NeuralNet;
 
 public class JankenController {
 

@@ -1,4 +1,4 @@
-package myai;
+package ai;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,11 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Service {
+/**
+ * ニューラルネットに関わるDBを操作するクラス
+ * @author tkato
+ *
+ */
+public class NeuralNetService {
 
 	public static void main(String[] args) {
 
-		Service service = new Service();
+		NeuralNetService service = new NeuralNetService();
 
 		List<double[]> images = service.getImageList();
 		List<double[]> teaches = service.getTeachList();

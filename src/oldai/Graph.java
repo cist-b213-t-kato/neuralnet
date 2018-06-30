@@ -1,4 +1,4 @@
-package artificialintelligence;
+package oldai;
 //Graph.java
 import java.awt.Color;
 import java.awt.Graphics;

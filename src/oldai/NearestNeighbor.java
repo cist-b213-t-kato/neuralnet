@@ -1,4 +1,4 @@
-package artificialintelligence;
+package oldai;
 //NearestNeighbor.java
 import java.util.AbstractMap;
 import java.util.ArrayList;

@@ -1,7 +1,8 @@
-package cr;
+package cr1;
 import java.util.ArrayList;
 import java.util.List;
 
+import ai.SoftmaxNeuralNetwork;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,9 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import myai.MultiNeuralNetwork;
 
-public class CRApp2 extends Application {
+/**
+ * ソフトマックス関数を使った手書き文字認識アプリ
+ * @author tkato
+ *
+ */
+public class SoftmaxCRGUIApp extends Application {
 
 	// 辺の長さ
 	private static final int sideSize = 10;
@@ -31,15 +36,13 @@ public class CRApp2 extends Application {
 
 	private Button registerButton;
 
-	private Button computeButton;
-
 	private TextField teacherSignalTextField;
 
 	private Label answerLabel;
 
 	private AnchorPane canvasPane;
 
-	public CRApp2() {
+	public SoftmaxCRGUIApp() {
 		array = new int[yMax * xMax];
 	}
 
@@ -67,7 +70,7 @@ public class CRApp2 extends Application {
 		stage.setWidth(300);
 		stage.setHeight(400);
 
-		MultiNeuralNetwork neuralNet = new MultiNeuralNetwork(100, 100, 10, 0.1);
+		SoftmaxNeuralNetwork neuralNet = new SoftmaxNeuralNetwork(100, 100, 10, 0.1);
 
 		AnchorPane root = new AnchorPane();//(BorderPane)FXMLLoader.load(getClass().getResource("CRApp.fxml"));
 		Scene scene = new Scene(root);
@@ -201,7 +204,6 @@ public class CRApp2 extends Application {
 //				answerLabel.setFont(new Font("Arial", 10));
 //				answerLabel.setText("おそらく");
 //			}
-			neuralNet.printResult();
 		});
 		stage.setScene(scene);
 		stage.show();

@@ -1,6 +1,8 @@
-package cr;
+package cr1;
+import java.util.ArrayList;
 import java.util.List;
 
+import ai.SigmoidNeuralNetwork;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,14 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import myai.MultiNeuralNetwork;
-import myai.Service;
 
-public class CRApp3 extends Application {
-
-	private Service service;
-
-	private MultiNeuralNetwork neuralNet;
+/**
+ * シグモイド関数を使った手書き文字認識アプリ
+ * @author tkato
+ *
+ */
+public class SigmoidCRGUIApp extends Application {
 
 	// 辺の長さ
 	private static final int sideSize = 10;
@@ -35,26 +36,17 @@ public class CRApp3 extends Application {
 
 	private Button registerButton;
 
-	private Button computeButton;
-
 	private TextField teacherSignalTextField;
 
 	private Label answerLabel;
 
 	private AnchorPane canvasPane;
 
-	List<double[]> inputs;
-	List<double[]> ress;
+	List<double[]> inputs = new ArrayList<>();
+	List<double[]> ress = new ArrayList<>();
 
-	public CRApp3() {
-		service = new Service();
-		inputs = service.getImageList(); //new ArrayList<>();
-		ress = service.getTeachList(); //new ArrayList<>();
+	public SigmoidCRGUIApp() {
 		array = new int[yMax * xMax];
-		neuralNet = new MultiNeuralNetwork(100, 2000, 10, 0.1);
-		double[][] i = inputs.toArray(new double[0][0]);
-		double[][] r = ress.toArray(new double[0][0]);
-		neuralNet.learn(i, r);
 	}
 
 	public void draw(Pane canvasPane, int x, int y) {
@@ -77,6 +69,8 @@ public class CRApp3 extends Application {
 		stage.setTitle("character recognition");
 		stage.setWidth(300);
 		stage.setHeight(400);
+
+		SigmoidNeuralNetwork neuralNet = new SigmoidNeuralNetwork(100, 100, 10);
 
 		AnchorPane root = new AnchorPane();//(BorderPane)FXMLLoader.load(getClass().getResource("CRApp.fxml"));
 		Scene scene = new Scene(root);
@@ -136,8 +130,6 @@ public class CRApp3 extends Application {
 					inputs.add(doubleArray);
 					ress.add(teacherSignalArray);
 
-					service.register(doubleArray, teacherSignalArray);
-
 					//reset
 					canvasPane.getChildren().clear();
 					array = new int[yMax*xMax];
@@ -148,12 +140,6 @@ public class CRApp3 extends Application {
 						}
 					}
 					teacherSignalTextField.clear();
-
-//					if (inputs.size() > 30) {
-//						inputs.remove(0);
-//						ress.remove(0);
-//					}
-
 					return;
 				}
 			} catch ( NumberFormatException e ) {
@@ -170,16 +156,15 @@ public class CRApp3 extends Application {
 		learnButton.setPrefWidth(100);
 		learnButton.setPrefHeight(50);
 		learnButton.setOnAction(event->{
-			double[][] i = inputs.toArray(new double[0][0]);
-			double[][] r = ress.toArray(new double[0][0]);
-			neuralNet.learn(i, r);
+			neuralNet.learn((double[][])inputs.toArray(new double[0][0]), (double[][])ress.toArray(new double[0][0]));
 			System.out.println("学習終了");
 		});
 		root.getChildren().add(learnButton);
 
 		answerLabel = new Label("-");
-		answerLabel.setLayoutX(0);
-		answerLabel.setLayoutY(110);
+		answerLabel.setLayoutX(120);
+		answerLabel.setLayoutY(0);
+		answerLabel.setFont(new Font("Arial", 30));
 		root.getChildren().add(answerLabel);
 
 		scene.setOnMousePressed((event) -> {
@@ -213,14 +198,7 @@ public class CRApp3 extends Application {
 					max = i;
 				}
 			}
-//			if ( result[max] >= 0.8 ) {
-				answerLabel.setFont(new Font("Arial", 20));
-				answerLabel.setText(String.format("%.1f%%の確率で%d", result[max]*100, max));
-//			} else {
-//				answerLabel.setFont(new Font("Arial", 10));
-//				answerLabel.setText("おそらく");
-//			}
-			neuralNet.printResult();
+			answerLabel.setText(""+max);
 		});
 		stage.setScene(scene);
 		stage.show();

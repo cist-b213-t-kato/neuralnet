@@ -7,7 +7,7 @@ import java.util.Random;
  * @author tkato
  *
  */
-public class BinaryNeuralNetwork {
+public class SigmoidNeuralNetwork {
 
 	private double[] input;
 	private double[] hidden; //入力層からの出力
@@ -22,20 +22,20 @@ public class BinaryNeuralNetwork {
 
 	public static void main(String[] args) {
 
-		new BinaryNeuralNetwork(2, 2, 1, 0.1).execute(1000);		//収束しない
-		new BinaryNeuralNetwork(2, 2, 1, 0.1).execute(100000);	//収束しないこともない。でも運要素が強い？
-		new BinaryNeuralNetwork(2, 4, 1, 0.1).execute(1000);		//収束しない
-		new BinaryNeuralNetwork(2, 4, 1, 0.5).execute(1000);		//収束する
-		new BinaryNeuralNetwork(2, 4, 1, 0.1).execute(10000);	//収束する
-		new BinaryNeuralNetwork(2, 6, 1, 0.1).execute(1000);		//収束しない
-		new BinaryNeuralNetwork(2, 6, 1, 0.5).execute(1000);		//収束する
-		new BinaryNeuralNetwork(2, 10, 1, 0.1).execute(1000);	//収束しない
-		new BinaryNeuralNetwork(2, 10, 1, 0.5).execute(1000);	//収束する
-		new BinaryNeuralNetwork(2, 10, 1, 0.5).execute(100);		//収束する
-		new BinaryNeuralNetwork(2, 10, 1, 1.0).execute(100);		//収束する
-		new BinaryNeuralNetwork(2, 100, 1, 0.1).execute(100);	//収束する途中といった感じ
-		new BinaryNeuralNetwork(2, 100, 1, 0.5).execute(100);	//ほぼ完全に収束
-		new BinaryNeuralNetwork(2, 100, 1, 0.1).execute(1000);	//収束する
+		new SigmoidNeuralNetwork(2, 2, 1, 0.1).execute(1000);		//収束しない
+		new SigmoidNeuralNetwork(2, 2, 1, 0.1).execute(100000);	//収束しないこともない。でも運要素が強い？
+		new SigmoidNeuralNetwork(2, 4, 1, 0.1).execute(1000);		//収束しない
+		new SigmoidNeuralNetwork(2, 4, 1, 0.5).execute(1000);		//収束する
+		new SigmoidNeuralNetwork(2, 4, 1, 0.1).execute(10000);	//収束する
+		new SigmoidNeuralNetwork(2, 6, 1, 0.1).execute(1000);		//収束しない
+		new SigmoidNeuralNetwork(2, 6, 1, 0.5).execute(1000);		//収束する
+		new SigmoidNeuralNetwork(2, 10, 1, 0.1).execute(1000);	//収束しない
+		new SigmoidNeuralNetwork(2, 10, 1, 0.5).execute(1000);	//収束する
+		new SigmoidNeuralNetwork(2, 10, 1, 0.5).execute(100);		//収束する
+		new SigmoidNeuralNetwork(2, 10, 1, 1.0).execute(100);		//収束する
+		new SigmoidNeuralNetwork(2, 100, 1, 0.1).execute(100);	//収束する途中といった感じ
+		new SigmoidNeuralNetwork(2, 100, 1, 0.5).execute(100);	//ほぼ完全に収束
+		new SigmoidNeuralNetwork(2, 100, 1, 0.1).execute(1000);	//収束する
 
 		/*
 		 * ( 結論？ )
@@ -78,7 +78,7 @@ public class BinaryNeuralNetwork {
 
 	}
 
-	public BinaryNeuralNetwork(int iSize, int hSize, int oSize, double eta) {
+	public SigmoidNeuralNetwork(int iSize, int hSize, int oSize, double eta) {
 
 		input = new double[iSize];
 		hidden = new double[hSize];

@@ -1,4 +1,4 @@
-package artificialintelligence;
+package oldai;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
 import java.util.StringTokenizer;
-
-import cr.Drawable;
 
 public class NeuralNet {
 
@@ -26,8 +24,6 @@ public class NeuralNet {
 	double alpha = 0.1; // 学習率
 //	private final double e2 = 0.0001;
 	private final double e2 = 0.001;
-
-	private Drawable errorDrawable;
 
 	public static void main(String[] args) {
 		NeuralNet nn = new NeuralNet(2, 10, 1);
@@ -69,10 +65,6 @@ public class NeuralNet {
 //		read();
 		initWeight();
 
-	}
-
-	public void setErrorDrawable(Drawable errorDrawable) {
-		this.errorDrawable = errorDrawable;
 	}
 
 	/**

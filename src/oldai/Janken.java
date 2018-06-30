@@ -1,4 +1,4 @@
-package artificialintelligence;
+package oldai;
 
 public class Janken {
 	public static void main(String[] args){

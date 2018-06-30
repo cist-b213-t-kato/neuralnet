@@ -1,4 +1,4 @@
-package artificialintelligence;
+package oldai;
 import java.util.Random;
 
 public class NN {

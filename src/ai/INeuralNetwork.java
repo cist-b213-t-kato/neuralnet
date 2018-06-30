@@ -1,4 +1,4 @@
-package myai;
+package ai;
 
 public interface INeuralNetwork {
 	public double[] compute( double[] in );
