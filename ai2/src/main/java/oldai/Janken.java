@@ -25,7 +25,7 @@ public class Janken {
 		return defHand[v1][v2];
 	}
 
-	public static int compare(int a, int b){
+	public static int judge(int a, int b){
 		if(a == b){
 			return 0;
 		}else if((a+1)%3==b){

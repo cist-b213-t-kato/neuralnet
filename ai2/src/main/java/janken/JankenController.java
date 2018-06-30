@@ -1,12 +1,12 @@
 package janken;
 import java.io.IOException;
 
+import ai.SigmoidNeuralNetwork;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import oldai.Janken;
-import oldai.NeuralNet;
 
 public class JankenController {
 
@@ -35,10 +35,10 @@ public class JankenController {
 
 	private int kachi, make, aiko;
 
-	private NeuralNet neuralNet;
+	private SigmoidNeuralNetwork neuralNet;
 
 	public JankenController(){
-		neuralNet = new NeuralNet(6, 6, 2);
+		neuralNet = new SigmoidNeuralNetwork(6, 6, 2);
 	}
 
 
